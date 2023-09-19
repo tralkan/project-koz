@@ -7,7 +7,9 @@
     "test": "hardhat test",
     "i": "hardhat deploy Module",
     "t": "REPORT_GAS=true hardhat test",
-    "s": "npx hardhat run scripts/deploy.ts"
+    "s": "npx hardhat run scripts/deploy.ts",
+    "n": "hardhat node",
+    "nc": "hardhat console --network localhost"
   },
   "author": "Xalkan",
   "license": "MIT",
