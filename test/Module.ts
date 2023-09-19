@@ -6,6 +6,7 @@ import {
 import { expect } from "chai";
 import { ethers, ignition } from "hardhat";
 import LockModule from "../ignition/Module";
+const hre = require("hardhat");
 
 describe("IgnitionLock", function () {
   // We define a fixture to reuse the same setup in every test.
@@ -21,7 +22,7 @@ describe("IgnitionLock", function () {
     // Contracts are deployed using the first signer/account by default
     const [owner, otherAccount] = await ethers.getSigners();
 
-    const { lock } = await ignition.deploy(LockModule, {
+    const { lock } = await hre.ignition.deploy(LockModule, {
       parameters: {
         LockModule: {
           unlockTime,
