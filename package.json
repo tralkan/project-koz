@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "hardhat test",
-    "i": "hardhat deploy Module"
+    "i": "hardhat deploy Module",
+    "t": "REPORT_GAS=true hardhat test"
   },
   "author": "Xalkan",
   "license": "MIT",
