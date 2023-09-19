@@ -6,7 +6,8 @@
   "scripts": {
     "test": "hardhat test",
     "i": "hardhat deploy Module",
-    "t": "REPORT_GAS=true hardhat test"
+    "t": "REPORT_GAS=true hardhat test",
+    "s": "npx hardhat run scripts/deploy.ts"
   },
   "author": "Xalkan",
   "license": "MIT",
