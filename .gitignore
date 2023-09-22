@@ -9,4 +9,5 @@ typechain-types
 cache
 artifacts
 
+contracts/Account0.sol
 contracts/Account1.sol
