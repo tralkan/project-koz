@@ -1,24 +1,24 @@
 import { buildModule } from "@nomicfoundation/hardhat-ignition";
-import hre from "hardhat";
 
-const currentTimestampInSeconds = Math.round(
-  new Date(2023, 0, 1).valueOf() / 1000,
-);
-const TEN_YEAR_IN_SECS: number = 10 * 365 * 24 * 60 * 60;
-const TEN_YEARS_IN_FUTURE: number =
-  currentTimestampInSeconds + TEN_YEAR_IN_SECS;
+const Module = buildModule("Module", (m) => {
+  const addresses = ["0xC68d43b78b5B720b0A1392269aFaC939DDfA40EE"];
+  const _guardians_addr = m.getParameter("_guardians_addr", addresses);
+  const _dns = m.getParameter(
+    "_dns",
+    "0xC68d43b78b5B720b0A1392269aFaC939DDfA40EE"
+  );
+  const ids: any[] = [];
+  const _guardians_id = m.getParameter("_guardians_id", ids);
 
-const ONE_GWEI: bigint = BigInt(hre.ethers.parseUnits("1", "gwei").toString());
+  const contract = m.contract("Account", [
+    _guardians_addr,
+    _dns,
+    _guardians_id,
+  ]);
 
-const LockModule = buildModule("LockModule", (m) => {
-  const unlockTime = m.getParameter("unlockTime", TEN_YEARS_IN_FUTURE);
-  const lockedAmount = m.getParameter("lockedAmount", ONE_GWEI);
-
-  const lock = m.contract("Lock", [unlockTime], {
-    value: lockedAmount,
-  });
-
-  return { lock };
+  return {
+    contract,
+  };
 });
 
-export default LockModule;
+export default Module;
