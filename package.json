@@ -1,27 +1,27 @@
 {
-    "name": "project-koz",
-    "version": "0.1.0",
-    "description": "",
-    "main": "index.js",
-    "scripts": {
-        "test": "hardhat test",
-        "i": "hardhat deploy Module",
-        "t": "REPORT_GAS=true hardhat test",
-        "s": "npx hardhat run scripts/deploy.ts",
-        "n": "hardhat node",
-        "nc": "hardhat console --network localhost",
-        "ni": "hardhat deploy Module --network localhost",
-        "ns": "hardhat run --network localhost scripts/deploy.ts",
-        "p": "prettier -w '*.{js,ts,md,json}' 'ignition/*.{js,ts,md,json}' 'test/*.{js,ts,md,json}' 'contracts/**/*.sol'",
-        "ps": "prettier -w 'contracts/**/*.sol'"
-    },
-    "author": "Xalkan",
-    "license": "MIT",
-    "devDependencies": {
-        "@nomicfoundation/hardhat-ignition": "^0.4.0",
-        "@nomicfoundation/hardhat-toolbox": "^3.0.0",
-        "hardhat": "^2.17.3",
-        "prettier": "^3.0.3",
-        "prettier-plugin-solidity": "^1.1.3"
-    }
+  "name": "project-koz",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "hardhat test",
+    "c": "hardhat compile",
+    "i": "hardhat deploy Module",
+    "t": "REPORT_GAS=true hardhat test",
+    "s": "npx hardhat run scripts/deploy.ts",
+    "n": "hardhat node",
+    "nc": "hardhat console --network localhost",
+    "ni": "hardhat deploy Module --network localhost",
+    "ns": "hardhat run --network localhost scripts/deploy.ts",
+    "p": "prettier -w '*.{js,ts,md,json}' 'ignition/*.{js,ts,md,json}' 'test/*.{js,ts,md,json}'"
+  },
+  "author": "Xalkan",
+  "license": "MIT",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-ignition": "^0.4.0",
+    "@nomicfoundation/hardhat-toolbox": "^3.0.0",
+    "@openzeppelin/contracts": "^4.9.3",
+    "hardhat": "^2.17.3",
+    "prettier": "^3.0.3"
+  }
 }
