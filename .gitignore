@@ -8,6 +8,13 @@ typechain-types
 # Hardhat files
 cache
 artifacts
+deployments
 
-contracts/Account0.sol
-contracts/Account1.sol
+# R&D contracts
+dev
+
+# Foundry files
+cache
+out
+cache_forge
+ignition/deployments/network-31337/deployed_addresses.json
