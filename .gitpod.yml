@@ -5,4 +5,14 @@
 # Learn more from ready-to-use templates: https://www.gitpod.io/docs/introduction/getting-started/quickstart
 
 tasks:
-  - init: npm i # && curl -L https://foundry.paradigm.xyz | bash && foundryup
+  - name: Install Foundry
+    before: curl -L https://foundry.paradigm.xyz | bash
+    init: source /home/gitpod/.bashrc
+    command: foundryup && gp sync-done foundry
+
+  - name: Install Node.js dependencies
+    init: npm i
+
+  - name: Deploy with Hardhat Ignition
+    init: source /home/gitpod/.bashrc
+    command: gp sync-await foundry && npm run i
