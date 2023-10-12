@@ -5,6 +5,4 @@
 # Learn more from ready-to-use templates: https://www.gitpod.io/docs/introduction/getting-started/quickstart
 
 tasks:
-  - init: npm
-
-
+  - init: npm i # && curl -L https://foundry.paradigm.xyz | bash && foundryup
