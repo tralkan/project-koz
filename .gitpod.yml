@@ -6,13 +6,14 @@
 
 tasks:
   - name: Install Foundry
-    before: curl -L https://foundry.paradigm.xyz | bash
-    init: source /home/gitpod/.bashrc
-    command: foundryup && gp sync-done foundry
+    before: |
+      curl -L https://foundry.paradigm.xyz | bash
+      source /home/gitpod/.bashrc
+      foundryup && gp sync-done foundry
 
   - name: Install Node.js dependencies
     init: npm i
 
   - name: Deploy with Hardhat Ignition
-    init: source /home/gitpod/.bashrc
-    command: gp sync-await foundry && npm run i
+    before: gp sync-await foundry && source /home/gitpod/.bashrc
+    command: npm run i
