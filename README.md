@@ -1,5 +1,7 @@
 # Tyron SSI Protocol on EVM
 
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/tralkan/project-koz)
+
 Welcome to the [Tyron SSI Protocol](https://ssiprotocol.com) repository for Ethereum Virtual Machine (EVM). This protocol is designed to provide secure, self-sovereign digital identities and enable tamper-proof transactions on blockchain networks.
 
 ## Features
@@ -16,7 +18,7 @@ These instructions will guide you through setting up and deploying the Tyron SSI
 ## Prerequisites
 
 - Node.js and npm installed
-- Ethereum wallet for testing (YouMetaMask)
+- Ethereum wallet for testing
 - Foundry installed:
 
 ```
