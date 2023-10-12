@@ -17,4 +17,4 @@ dev
 cache
 out
 cache_forge
-ignition/deployments/network-31337/deployed_addresses.json
+ignition/deployments
