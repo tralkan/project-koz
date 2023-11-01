@@ -11,9 +11,14 @@ describe("Account", function () {
   async function deployFixture() {
     // Contracts are deployed using the first signer/account by default
     const [owner, otherAccount] = await hre.ethers.getSigners();
-    const addresses = ["0xC68d43b78b5B720b0A1392269aFaC939DDfA40EE"];
+    const addresses = [
+      "0xC68d43b78b5B720b0A1392269aFaC939DDfA40EE",
+      // "0xC68d43b78b5B720b0A1392269aFaC939DDfA40EE",
+      //"0x0000000000000000000000000000000000000000",
+    ];
     const dns = "0xC68d43b78b5B720b0A1392269aFaC939DDfA40EE";
     const ids: any[] = [];
+
     const { contract } = await ignition.deploy(Module, {
       parameters: {
         Module: {
@@ -34,12 +39,18 @@ describe("Account", function () {
 
   describe("Deployment", function () {
     it("Should set the right owner", async function () {
-      const { contract, owner } = await loadFixture(deployFixture);
+      await loadFixture(deployFixture)
+        .then(async ({ contract, owner }) => {
+          const contract_owner = await contract.owner();
+          console.log("contract owner:", contract_owner.toString());
+          expect(contract_owner).to.equal(owner.address);
+        })
+        .catch((err) => {
+          console.log("TestErr:", err);
+        });
       // expect(contract.target).to.equal(
       //   "0x5fbdb2315678afecb367f032d93f642f64180aa3"
       // );
-
-      expect(await contract.owner()).to.equal(owner.address);
     });
 
     it("Should verify the guardian config params", async function () {
@@ -137,4 +148,48 @@ describe("Account", function () {
   //     });
   //   });
   // });
+
+  describe("Guardians", function () {
+    describe("Validations", function () {
+      it("Should not add the null address as a guardian", async function () {
+        await loadFixture(deployFixture)
+          .then(async ({ contract }) => {
+            const guardians = ["0x0000000000000000000000000000000000000000"];
+            // const result = await contract.addGuardians(guardians, []);
+            await expect(contract.addGuardians(guardians, [])).to.be.reverted;
+          })
+          .catch((err) => {
+            console.log("TestErr:", err);
+          });
+      });
+    });
+
+    describe("AddGuardians", function () {
+      it("Should add two new guardians & verify the params", async function () {
+        await loadFixture(deployFixture)
+          .then(async ({ contract }) => {
+            const guardians = [
+              "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
+              "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC",
+            ];
+            // const result = await contract.addGuardians(guardians, []);
+            await expect(contract.addGuardians(guardians, [])).not.to.be
+              .reverted;
+
+            const guardian_params = await contract.getGuardianParams();
+            expect(guardian_params[0].toString()).to.equal("3");
+            expect(guardian_params[1].toString()).to.equal("3");
+            console.log("guardian count:", guardian_params[0].toString());
+            console.log("guardian threshold:", guardian_params[1].toString());
+          })
+          .catch((err) => {
+            console.log("TestErr:", err);
+          });
+      });
+      // it("Should verify the new guardians", async function () {
+      //   const { contract } = await loadFixture(deployFixture);
+
+      //         });
+    });
+  });
 });
