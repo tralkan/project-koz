@@ -7,14 +7,14 @@ const Module = buildModule("Module", (m) => {
   const guardiansAddr = m.getParameter("guardiansAddr", addresses);
   const dns = m.getParameter(
     "dns",
-    "0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789"
+    "0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789",
   );
   const ids: any[] = [];
   const guardiansId = m.getParameter("guardiansId", ids);
 
   const anEntryPoint = m.getParameter(
     "anEntryPoint",
-    "0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789"
+    "0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789",
   );
   const contract = m.contract("TyronSSIAccount", [
     guardiansAddr,

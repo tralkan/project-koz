@@ -58,13 +58,13 @@ describe("Account", function () {
 
       const guardian_params = await contract.getGuardianParams();
       expect(guardian_params[0].toString()).to.equal(
-        addresses.length.toString()
+        addresses.length.toString(),
       );
       //half plus one of the number of ids, only integer part but minimum 3
       const threshold = Math.floor(ids.length / 2 + 1);
       //threshold must be at least 3
       expect(guardian_params[1].toString()).to.equal(
-        Math.max(threshold, 3).toString()
+        Math.max(threshold, 3).toString(),
       );
       console.log("guardian count:", guardian_params[0].toString());
       console.log("guardian threshold:", guardian_params[1].toString());
