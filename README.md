@@ -13,7 +13,7 @@ Welcome to the [Tyron SSI Protocol](https://ssiprotocol.com) repository for Ethe
 
 ## Getting Started
 
-These instructions will guide you through setting up and deploying the Tyron SSI Protocol on your local machine for development and testing purposes. See the [Installation](#installation) section for detailed setup instructions.
+These instructions will guide you through setting up and deploying a [TyronSSI account](./contracts/Account.sol) on your local machine for development and testing purposes. See the [Installation](#installation) section for detailed setup instructions.
 
 ## Prerequisites
 
