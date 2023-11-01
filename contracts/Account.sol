@@ -446,7 +446,6 @@ contract TyronSSIAccount is
          */
         for (uint256 i = 0; i < incoming; i++) {
             address guardian = guardiansAddr[i];
-            console.log("The given address is: %o", guardian);
 
             /**
              * @dev Calculate the hash of the guardian address.
@@ -489,6 +488,7 @@ contract TyronSSIAccount is
              */
             guardian_count = guardian_count.add(1);
             _guardians[guardian_hash] = true;
+            console.log("New guardian address: %o", guardian);
         }
         _guardianCount = guardian_count;
         _updateGuardianThreshold(guardian_count);
@@ -672,6 +672,10 @@ contract TyronSSIAccount is
         emit OwnershipTransferred(old_owner, sender);
     }
 
+    struct NewSigner {
+        address newOwner;
+    }
+
     /**
      * @notice Updates the owner of the account with the help of its guardians.
      * @param newOwner Address of the new account owner.
@@ -684,18 +688,42 @@ contract TyronSSIAccount is
         address newOwner,
         address[] memory guardians,
         bytes[] memory signatures
-    ) external view {
+    ) external {
+        NewSigner memory new_signer = NewSigner({newOwner: newOwner});
+        /**
+         * @dev Get the new owner hash.
+         */
+        bytes32 STRUCT_HASH = keccak256(abi.encode(new_signer));
+        console.logBytes32(STRUCT_HASH);
+
+        // Calculate the EIP-712 domain separator hash
+        bytes32 DOMAIN_SEPARATOR = keccak256(
+            abi.encode(
+                keccak256(
+                    "EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"
+                ),
+                keccak256("Tyron"),
+                // keccak256(bytes("1")),
+                block.chainid, // Chain ID of the Ethereum network
+                address(this) // Address of the contract
+            )
+        );
+        console.logBytes32(DOMAIN_SEPARATOR);
+
+        // bytes32 digest = keccak256(
+        //     abi.encodePacked(
+        //         "\x19\x01", // EIP-191 header for EIP-712 prefix
+        //         DOMAIN_SEPARATOR, // Domain separator
+        //         STRUCT_HASH // Hash of the struct data
+        //     )
+        // );
+        bytes32 digest = ECDSA.toTypedDataHash(DOMAIN_SEPARATOR, STRUCT_HASH);
+        console.logBytes32(digest);
+
         /**
          * @dev Count the number of guardians.
          */
         uint256 guardian_amount = guardians.length;
-
-        /**
-         * @dev Get the new owner hash.
-         */
-        bytes32 digest = keccak256(
-            abi.encodePacked("\x19Ethereum Signed Message:\n", newOwner)
-        );
 
         /**
          * @dev Accounts for the verified guardians.
@@ -725,18 +753,7 @@ contract TyronSSIAccount is
              * @dev Verify the guardian's signature.
              */
             bytes memory signature = signatures[i];
-            //address recovered = ECDSA.recover(digest, signature);
-
-            bytes32 hash = keccak256(
-                abi.encodePacked("\x19Ethereum Signed Message:\n32", digest)
-            );
-            (address recovered, ECDSA.RecoverError error) = hash.tryRecover(
-                signature
-            );
-            console.log(recovered);
             if (
-                // (error == ECDSA.RecoverError.NoError &&
-                recovered == guardian ||
                 SignatureChecker.isValidSignatureNow(
                     guardian,
                     digest,
@@ -752,8 +769,8 @@ contract TyronSSIAccount is
             }
         }
         console.log("verified count: %o", guardian_count);
-        // require(guardian_count >= _guardianThreshold, "Failed Recovery");
-        // transferOwnership(newOwner);
+        require(guardian_count >= _guardianThreshold, "Failed Recovery");
+        transferOwnership(newOwner);
     }
 
     function _authorizeUpgrade(

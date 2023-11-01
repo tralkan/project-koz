@@ -1,6 +1,7 @@
 import { loadFixture } from "@nomicfoundation/hardhat-toolbox/network-helpers";
 import { expect } from "chai";
 import {
+  TypedDataEncoder,
   hashMessage,
   keccak256,
   solidityPackedKeccak256,
@@ -74,7 +75,7 @@ describe("TyronSSIAccount", function () {
 
       //threshold must be at least 3
       expect(guardian_params[1].toString()).to.equal(
-        Math.max(threshold, 3).toString()
+        Math.max(threshold, 3).toString(),
       );
       console.log("Guardian threshold:", guardian_params[1].toString());
     });
@@ -100,23 +101,79 @@ describe("TyronSSIAccount", function () {
 
       //threshold must be at least 3
       expect(guardian_params[1].toString()).to.equal(
-        Math.max(threshold, 3).toString()
+        Math.max(threshold, 3).toString(),
       );
       console.log("Guardian threshold:", guardian_params[1].toString());
     });
 
     // it("Social recovers the account", async function () {
-    //   const { contract, accounts, wallet1, wallet2, wallet3, wallet4 } =
+    //   const { contract, accounts, signer, wallet1, wallet2, wallet3, wallet4 } =
     //     await loadFixture(deployFixture);
 
     //   //@notice Transfers the ownership to account1
     //   const new_signer = accounts[1].address;
 
-    //   const hash_ = solidityPackedKeccak256(["address"], [new_signer]);
+    //   // const digest = solidityPackedKeccak256(["address"], [new_signer]);
+    //   // console.log("Digest:", digest);
 
-    //   const hash = keccak256(toUtf8Bytes(new_signer));
-    //   console.log("Digest:", hash_);
-    //   console.log("Digest:", hash);
+    //   // eth_signTypedData_v4 parameters. All of these parameters affect the resulting signature.
+    //   const domain = {
+    //     // This defines the network, in this case, Hardhat Network.
+    //     chainId: 31337,
+    //     // Give a user-friendly name to the specific contract you're signing for.
+    //     name: "Tyron",
+    //     // Add a verifying contract to make sure you're establishing contracts with the proper entity.
+    //     verifyingContract: contract.target,
+    //     // This identifies the latest version.
+    //     version: "1",
+    //   };
+
+    //   // This defines the message you're proposing the user to sign, is dapp-specific, and contains
+    //   // anything you want. There are no required fields. Be as explicit as possible when building out
+    //   // the message schema.
+
+    //   const message = {
+    //     newOwner: new_signer,
+    //     // contents: "Hello, Bob!",
+    //     // attachedMoneyInEth: 4.2,
+    //     // from: {
+    //     //   name: "Cow",
+    //     //   wallets: [
+    //     //     "0xCD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826",
+    //     //     "0xDeaDbeefdEAdbeefdEadbEEFdeadbeEFdEaDbeeF",
+    //     //   ],
+    //     // },
+    //     // to: [
+    //     //   {
+    //     //     name: "Bob",
+    //     //     wallets: [
+    //     //       "0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB",
+    //     //       "0xB0BdaBea57B0BDABeA57b0bdABEA57b0BDabEa57",
+    //     //       "0xB0B0b0b0b0b0B000000000000000000000000000",
+    //     //     ],
+    //     //   },
+    //     // ],
+    //   };
+
+    //   // This refers to the keys of the following types object.
+    //   const types = {
+    //     // This refers to the domain the contract is hosted on.
+    //     // @dev The domain type is inbuilt in the EIP712 standard
+    //     // EIP712Domain: [
+    //     //   { name: "name", type: "string" },
+    //     //   { name: "version", type: "string" },
+    //     //   { name: "chainId", type: "uint256" },
+    //     //   { name: "verifyingContract", type: "address" },
+    //     // ],
+    //     NewSigner: [{ name: "newOwner", type: "address" }],
+    //   };
+
+    //   const typedData = new TypedDataEncoder(types);
+    //   console.log(typedData);
+    //   const domainSeparator = TypedDataEncoder.hashDomain(domain);
+    //   console.log(domainSeparator);
+    //   const hashStruct = typedData.hashStruct("NewSigner", message);
+    //   console.log(hashStruct);
 
     //   const addr1 = wallet1.address;
     //   const addr2 = wallet2.address;
@@ -124,20 +181,19 @@ describe("TyronSSIAccount", function () {
     //   const addr4 = wallet4.address;
     //   const addresses: string[] = [addr1, addr2, addr3, addr4];
 
-    //   const sig1 = await wallet1.signMessage(hash);
+    //   const sig1 = await wallet1.signTypedData(domain, types, message);
     //   console.log("Guardian signature:", sig1);
-    //   console.log(sig1);
-    //   const sig2 = await wallet2.signMessage(hash);
+    //   const sig2 = await wallet2.signTypedData(domain, types, message);
     //   console.log("Guardian signature:", sig2);
-    //   const sig3 = await wallet3.signMessage(hash);
+    //   const sig3 = await wallet3.signTypedData(domain, types, message);
     //   console.log("Guardian signature:", sig3);
-    //   const sig4 = await wallet4.signMessage(hash);
+    //   const sig4 = await wallet4.signTypedData(domain, types, message);
     //   console.log("Guardian signature:", sig4);
     //   const signatures: string[] = [sig1, sig2, sig3, sig4];
 
     //   await contract.socialRecovery(new_signer, addresses, signatures);
 
-    //   // expect(await contract.owner()).to.equal(new_signer);
+    //   //   // expect(await contract.owner()).to.equal(new_signer);
     // });
   });
 });
