@@ -6,7 +6,7 @@ async function main() {
 
   const addresses = [
     "0x1c61dE56e7b39efaCfEcE6fEDa5807dcDFBaB7c6",
-    otherAccount.address,
+    // otherAccount.address,
   ];
   const dns = "0xC68d43b78b5B720b0A1392269aFaC939DDfA40EE";
   const ids: any[] = [];
