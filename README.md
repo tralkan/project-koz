@@ -35,6 +35,9 @@ Follow these steps to set up the project on your local machine:
 2. Change directory: `cd project-koz`
 3. Install dependencies: `npm i`
 4. Run Hardhat script to deploy a TyronSSI account to Polygon zkEVM: `npm run sn`
+5. Run Hardhat unit tests with: `npm run th`
+
+A [front-end interface](https://github.com/tralkan/tyron) is in development with Next.js, Web3Modal and other great tools!
 
 ## Contributing
 
