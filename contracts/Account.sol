@@ -86,6 +86,12 @@ contract TyronSSIAccount is
     // bytes4(keccak256("isValidSignature(bytes32,bytes)"))
     bytes4 internal immutable _1271_MAGIC_VALUE = 0x1626ba7e;
     IEntryPoint private immutable _entryPoint;
+    // keccak256("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)")
+    bytes32 private constant DOMAIN_SEPARATOR_TYPEHASH =
+        0x8b73c3c69bb8fe3d512ecc4cf759cc79239f7b179b0ffacaa9a75d522b39400f;
+    // keccak256("LightAccountMessage(bytes message)");
+    bytes32 private constant LA_MSG_TYPEHASH =
+        0x5e3baca2936049843f06038876a12f03627b5edc98025751ecf2ac7562640199;
 
     /**
      * @dev Alchemy's Light Account Storage
@@ -171,11 +177,61 @@ contract TyronSSIAccount is
     }
 
     /**
+     * @notice Receives native cryptocurrency.
+     * @dev The function reverts if the value is zero.
+     */
+    receive() external payable {
+        require(msg.value > 0, "Account: The value must be greater than zero.");
+    }
+
+    /**
      * @notice Returns the address of the current owner.
      * @return The current owner.
      */
     function owner() public view override returns (address) {
         return _getStorage().owner;
+    }
+
+    /**
+     * @notice Returns the domain separator for this contract, as defined in the EIP-712 standard.
+     * @return bytes32 The domain separator hash.
+     */
+    function domainSeparator() public view returns (bytes32) {
+        return
+            keccak256(
+                abi.encode(
+                    DOMAIN_SEPARATOR_TYPEHASH,
+                    abi.encode("TyronSSIAccount"), // name
+                    abi.encode("1"), // version
+                    block.chainid, // chainId
+                    address(this) // verifying contract
+                )
+            );
+    }
+
+    /**
+     * @notice Returns the pre-image of the message hash
+     * @param message Message that should be encoded.
+     * @return Encoded message.
+     */
+    function encodeMessageData(
+        bytes memory message
+    ) public view returns (bytes memory) {
+        bytes32 message_hash = keccak256(
+            abi.encode(LA_MSG_TYPEHASH, keccak256(message))
+        );
+        return abi.encodePacked("\x19\x01", domainSeparator(), message_hash);
+    }
+
+    /**
+     * @notice Returns hash of a message that can be signed by owners.
+     * @param message Message that should be hashed.
+     * @return Message hash.
+     */
+    function getMessageHash(
+        bytes memory message
+    ) public view returns (bytes32) {
+        return keccak256(encodeMessageData(message));
     }
 
     /*
@@ -208,14 +264,6 @@ contract TyronSSIAccount is
     }
 
     /**
-     * @notice Receives native cryptocurrency.
-     * @dev The function reverts if the value is zero.
-     */
-    receive() external payable {
-        require(msg.value > 0, "Account: The value must be greater than zero.");
-    }
-
-    /**
      * @inheritdoc IERC1271
      * @notice Signature authentication.
      * @dev The signature is valid if it is signed by the owner's private key
@@ -230,7 +278,14 @@ contract TyronSSIAccount is
         bytes32 digest,
         bytes memory signature
     ) external view override returns (bytes4) {
-        if (SignatureChecker.isValidSignatureNow(owner(), digest, signature)) {
+        bytes32 message_hash = getMessageHash(abi.encode(digest));
+        if (
+            SignatureChecker.isValidSignatureNow(
+                owner(),
+                message_hash,
+                signature
+            )
+        ) {
             return _1271_MAGIC_VALUE;
         }
         return 0xffffffff;
@@ -672,10 +727,6 @@ contract TyronSSIAccount is
         emit OwnershipTransferred(old_owner, sender);
     }
 
-    struct NewSigner {
-        address newOwner;
-    }
-
     /**
      * @notice Updates the owner of the account with the help of its guardians.
      * @param newOwner Address of the new account owner.
@@ -689,36 +740,13 @@ contract TyronSSIAccount is
         address[] memory guardians,
         bytes[] memory signatures
     ) external {
-        NewSigner memory new_signer = NewSigner({newOwner: newOwner});
+        LightAccountStorage memory new_signer = LightAccountStorage({
+            owner: newOwner
+        });
         /**
-         * @dev Get the new owner hash.
+         * @dev Get the new owner message hash.
          */
-        bytes32 STRUCT_HASH = keccak256(abi.encode(new_signer));
-        console.logBytes32(STRUCT_HASH);
-
-        // Calculate the EIP-712 domain separator hash
-        bytes32 DOMAIN_SEPARATOR = keccak256(
-            abi.encode(
-                keccak256(
-                    "EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"
-                ),
-                keccak256("Tyron"),
-                // keccak256(bytes("1")),
-                block.chainid, // Chain ID of the Ethereum network
-                address(this) // Address of the contract
-            )
-        );
-        console.logBytes32(DOMAIN_SEPARATOR);
-
-        // bytes32 digest = keccak256(
-        //     abi.encodePacked(
-        //         "\x19\x01", // EIP-191 header for EIP-712 prefix
-        //         DOMAIN_SEPARATOR, // Domain separator
-        //         STRUCT_HASH // Hash of the struct data
-        //     )
-        // );
-        bytes32 digest = ECDSA.toTypedDataHash(DOMAIN_SEPARATOR, STRUCT_HASH);
-        console.logBytes32(digest);
+        bytes32 message_hash = getMessageHash(abi.encode(new_signer));
 
         /**
          * @dev Count the number of guardians.
@@ -756,7 +784,7 @@ contract TyronSSIAccount is
             if (
                 SignatureChecker.isValidSignatureNow(
                     guardian,
-                    digest,
+                    message_hash,
                     signature
                 )
             ) {
